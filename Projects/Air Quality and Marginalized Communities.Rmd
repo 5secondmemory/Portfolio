@@ -1,0 +1,389 @@
+---
+title: "Air Quality in Marginalized Communities"
+author: "Will Munson"
+date: "2023-06-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r}
+library(tidyverse)
+```
+
+To start off, let's load in our dataset for air quality. 
+
+```{r}
+air_quality <- read.csv("C:/Users/wmuns/Downloads/Air_Quality.csv")
+PM2.5 <- air_quality[air_quality$Name == "Fine Particulate Matter (PM2.5)",]
+PM2.5_Borough <- PM2.5[PM2.5$Geo.Type.Name == "Borough",]
+PM2.5_CD <- PM2.5[PM2.5$Geo.Type.Name == "CD",]
+summary(PM2.5_CD)
+```
+
+Let's take some yearly averages for the PM2.5. However, there appears to be something wrong with the $Start_Date$ variable. Let's try converting this to a date.
+```{r}
+library(lubridate)
+```
+
+Now let's fix the $Start_Date$ column:
+```{r}
+PM2.5_Borough$Start_Date <- mdy(PM2.5_Borough$Start_Date)
+PM2.5_CD$Start_Date <- mdy(PM2.5_CD$Start_Date)
+```
+
+Alright, that worked! Now let's set up a graph that shows exactly how things have changed overtime in each borough. 
+
+```{r}
+PM2.5_Borough <- PM2.5_Borough %>%
+  group_by(Start_Date, Geo.Place.Name) %>%
+  #group_by(Geo.Join.ID) %>%
+  summarise(mean = mean(Data.Value))
+
+summary(PM2.5_Borough)
+```
+
+
+```{r}
+i <- ggplot(PM2.5_Borough, aes(Start_Date, mean, group = Geo.Place.Name))
+i + geom_line(aes(col = PM2.5_Borough$Geo.Place.Name))
+```
+
+
+Now let's get the averages for PM2.5 each year.
+```{r}
+PM2.5_CD$year <- floor_date(PM2.5_CD$Start_Date, "year")
+
+PM2.5_CD <- PM2.5_CD %>%
+  group_by(year, Geo.Join.ID) %>%
+  #group_by(Geo.Join.ID) %>%
+  summarise(mean = mean(Data.Value), median = median(Data.Value), range = max(Data.Value)-min(Data.Value))
+```
+
+Now let's load in some demographic data. We should also filter this so that we don't have any blank columns. Now, this dataset appears to be super loaded, so this means we're going to have to do a little extra cleaning because of it.  On top of that, it seems like there were a lot of columns that were incorrectly labeled as character columns, meaning I ended up having to remove dozens of commas, dollar signs and percentage signs before changing them to numeric values using the *gsub* function.
+```{r}
+Demographics <- read.csv("C:/Users/wmuns/OneDrive/Documents/New York Demographic Data.csv", na.strings = c("","NA"))
+District_Demographics <- Demographics[Demographics$region_type == "Community District",]
+#District_Demographics$year <- ymd(District_Demographics$year, truncated = 2L)
+#District_Demographics <- District_Demographics[District_Demographics$year > '2007-01-01' & District_Demographics$year < '2021-01-01',]
+District_Demographics_Fix <- District_Demographics %>%
+  filter(!is.na(region_name)) %>%
+  filter(!is.na(region_display)) %>%
+  distinct() %>%
+  select_if(~!(all(is.na(.)) | all(. == "")))
+
+District_Demographics_Fix$year <- ymd(District_Demographics_Fix$year, truncated = 2L)
+District_Demographics_Fix <- District_Demographics_Fix[District_Demographics_Fix$year > '2007-01-01' & District_Demographics_Fix$year < '2021-01-01',]
+District_Demographics_Fix <- head(District_Demographics_Fix, -42)
+District_Demographics_Fix$hpi_ot <- as.numeric(gsub(",", "", District_Demographics_Fix$hpi_ot))
+District_Demographics_Fix$hpi_1f <- as.numeric(gsub(",", "", District_Demographics_Fix$hpi_1f))
+District_Demographics_Fix$hpi_4f <- as.numeric(gsub(",", "", District_Demographics_Fix$hpi_4f))
+District_Demographics_Fix$lp_all <- as.numeric(gsub(",", "", District_Demographics_Fix$lp_all))
+District_Demographics_Fix$lp_fam14condo_initial <- as.numeric(gsub(",", "", District_Demographics_Fix$lp_fam14condo_initial))
+District_Demographics_Fix$lp_fam14condo_repeat <- as.numeric(gsub(",", "", District_Demographics_Fix$lp_fam14condo_repeat))
+#District_Demographics_Fix <- District_Demographics_Fix %>%
+ # mutate_if(is.character, as.numeric)
+District_Demographics_Fix$med_r_1f <- as.numeric(gsub("[\\$,]", "", District_Demographics_Fix$med_r_1f))
+District_Demographics_Fix$med_r_4f <- as.numeric(gsub("[\\$,]", "", District_Demographics_Fix$med_r_4f))
+District_Demographics_Fix$med_r_cn <- as.numeric(gsub("[\\$,]", "", District_Demographics_Fix$med_r_cn))
+District_Demographics_Fix$med_r_ot <- as.numeric(gsub("[\\$,]", "", District_Demographics_Fix$med_r_ot))
+District_Demographics_Fix$nb_permit_res_units <- as.numeric(gsub(",", "", District_Demographics_Fix$nb_permit_res_units))
+District_Demographics_Fix$pct_prof_ela <- as.numeric(gsub("%$", "", District_Demographics_Fix$pct_prof_ela))
+District_Demographics_Fix$pct_prof_math <- as.numeric(gsub("%$", "", District_Demographics_Fix$pct_prof_math))
+District_Demographics_Fix$pfn_fam14condo <- as.numeric(gsub(",", "", District_Demographics_Fix$pfn_fam14condo))
+District_Demographics_Fix <- District_Demographics_Fix %>%
+  select_if(~!(all(is.na(.))))
+District_Demographics_Fix$priv_evic_amt_sought_med_adj <- as.numeric(gsub("[\\$,]", "", District_Demographics_Fix$priv_evic_amt_sought_med_adj))
+District_Demographics_Fix$priv_evic_filings <- as.numeric(gsub(",", "", District_Demographics_Fix$priv_evic_filings))
+District_Demographics_Fix$prox_park_pct <- as.numeric(gsub("%$", "", District_Demographics_Fix$prox_park_pct))
+District_Demographics_Fix$prox_subway_pct <- as.numeric(gsub("%$", "", District_Demographics_Fix$prox_subway_pct))
+District_Demographics_Fix$rent_change <- as.numeric(gsub("%$", "", District_Demographics_Fix$rent_change))
+District_Demographics_Fix$reo <- as.numeric(gsub(",", "", District_Demographics_Fix$reo))
+District_Demographics_Fix$units_cert <- as.numeric(gsub(",", "", District_Demographics_Fix$units_cert))
+District_Demographics_Fix$volume_1f <- as.numeric(gsub(",", "", District_Demographics_Fix$volume_1f))
+District_Demographics_Fix$volume_4f <- as.numeric(gsub(",", "", District_Demographics_Fix$volume_4f))
+District_Demographics_Fix$volume_al <- as.numeric(gsub(",", "", District_Demographics_Fix$volume_al))
+District_Demographics_Fix$volume_cn <- as.numeric(gsub(",", "", District_Demographics_Fix$volume_cn))
+District_Demographics_Fix$volume_ot <- as.numeric(gsub(",", "", District_Demographics_Fix$volume_ot))
+summary(District_Demographics_Fix)
+```
+
+Alright, with that taken care of, we should try joining our datasets together. Since we have repeat ID's involved, we can't just assume we should join only ID's together and assume we're done. In that case, we need to join by both ID and year.
+```{r}
+Demo2.5 <- merge(PM2.5_CD, District_Demographics_Fix, by.x = c("Geo.Join.ID", "year"), by.y = c("region_id", "year"))
+summary(Demo2.5)
+```
+
+Alright, now that we have that taken care of, let's take a look at a linear model that might work for this dataset. 
+
+EDIT: Maybe before we get to that, we should do some *ggplot* functions real quick. 
+```{r}
+library(ggplot2)
+```
+
+Just to make sure we understand how the data works before we start diving into creating linear models, we should probably take a look at each factor's distribution. 
+```{r}
+c <- ggplot(Demo2.5, aes(mean))
+c + geom_density() + facet_grid(rows = vars(factor(findInterval(Geo.Join.ID, c(100, 200, 300, 400, 500))))) + geom_vline(aes(xintercept = 12),lty=2, color = 'blue')
+```
+
+```{r}
+e <- ggplot(Demo2.5, aes(crime_all_rt, mean)) + labs(color = "Boroughs")
+#legend_title <- "Boroughs"
+e + geom_point(aes(color = factor(findInterval(Geo.Join.ID, c(100, 200, 300, 400, 500))))) + facet_grid(cols = vars(factor(findInterval(Geo.Join.ID, c(100, 200, 300, 400, 500))))) + geom_smooth() + xlim(0,45) + geom_hline(aes(yintercept = 12),lty=2, color = 'blue')
+```
+
+
+What I did here is I basically lined up all the variables using the linear model function, or *lm()*, to get a better understanding of how each variable works with each other. Initially, I tried lining up all the variables into the whole model, but this did not turn out so well. Some of the data was missing, including proximity to parks and subways, or change in rent, so I had to exclude those points in order to get a better understanding of the rest of the model. Also, anything with a $Pr(>|t|) > 0.5$ is considered unfit for the model and was removed as a result. 
+```{r}
+mod <- lm(mean ~ year + crime_all_rt + hpi_al + lp_all + med_r_4f + med_r_ot + nb_permit_res_units + pct_prof_ela + pfn_fam14condo + pfn_fam14condo_rate + priv_evic_filing_rt + priv_evic_filings + total_viol_rate + volume_1f + volume_4f + volume_al + population_density, data = Demo2.5)
+summary(mod)
+```
+
+So, the issue we're running into is the first things that we would usually go for whenever studying marginalized communities do not show any data for the community districts listed in the demographics data. This means we'd have to select other indicators in order to see if there's any impact as a result of high PM2.5 levels. In this case, we're looking at both violent and property crime, median rent, and academic performance among elementary school students. 
+
+As the linear model above indicates, there's a strong amount of significance between the mean PM2.5 each year and overall academic performance among elementary school students in both math and the arts. There's also significance between PM2.5 levels and property crime, and median rent for both single-family units and multifamily units, as well as a relatively weak significance for violent crime. However, there's no significance in the combination of violent and property crime.  
+```{r}
+plot(mod)
+```
+
+Now, taking a look at the top nine most influential factors, let's observe how they correlate with PM2.5 levels on scatterplots. 
+
+```{r}
+par(mfrow=c(3,3))
+plot(mod$model$crime_all_rt, mod$model$mean, main = "PM2.5 vs. Crime")
+abline(lm(mod$model$mean ~ mod$model$crime_all_rt), col = 'red')
+plot(mod$model$volume_4f, mod$model$mean, main = "PM2.5 vs. Payments for 2-4 unit homes")
+abline(lm(mod$model$mean ~ mod$model$volume_4f), col = 'orange')
+plot(mod$model$volume_1f, mod$model$mean, main = "PM2.5 vs. Payments for 1 unit homes")
+abline(lm(mod$model$mean ~ mod$model$volume_1f), col = 'yellow')
+plot(mod$model$volume_al, mod$model$mean, main = "PM2.5 vs. Payments for all homes")
+abline(lm(mod$model$mean ~ mod$model$volume_al), col = 'darkgreen')
+plot(mod$model$hpi_al, mod$model$mean, main = "PM2.5 vs. Price changes for all property")
+abline(lm(mod$model$mean ~ mod$model$hpi_al), col = 'blue')
+plot(mod$model$pfn_fam14condo_rate, mod$model$mean, main = "PM2.5 vs. Pre-forclosure notice rate")
+abline(lm(mod$model$mean ~ mod$model$pfn_fam14condo_rate), col = '#4B0082')
+plot(mod$model$pfn_fam14condo, mod$model$mean, main = "PM2.5 vs. Pre-forclosure notices")
+abline(lm(mod$model$mean ~ mod$model$pfn_fam14condo), col = 'purple')
+plot(mod$model$priv_evic_filing_rt, mod$model$mean, main = "PM2.5 vs. Eviction Rate")
+abline(lm(mod$model$mean ~ mod$model$priv_evic_filing_rt), col = 'gold')
+plot(mod$model$med_r_4f, mod$model$mean, main = "PM2.5 vs. Median rent for 2-4 family homes")
+abline(lm(mod$model$mean ~ mod$model$med_r_4f), col = '#BFC2C5')
+```
+
+Now, let's observe their coefficients individually. 
+```{r}
+mod_crime <- lm(mod$model$mean ~ mod$model$crime_all_rt)
+mod_vol_4f <- lm(mod$model$mean ~ mod$model$volume_4f)
+mod_vol_1f <- lm(mod$model$mean ~ mod$model$volume_1f)
+mod_vol_al <- lm(mod$model$mean ~ mod$model$volume_al)
+mod_hpi_al <- lm(mod$model$mean ~ mod$model$hpi_al)
+mod_pfn_rate <- lm(mod$model$mean ~ mod$model$pfn_fam14condo_rate)
+mod_pfn <- lm(mod$model$mean ~ mod$model$pfn_fam14condo)
+mod_evic_rt <- lm(mod$model$mean ~ mod$model$priv_evic_filing_rt)
+mod_med_4f <- lm(mod$model$mean ~ mod$model$med_r_4f)
+
+mod_crime
+mod_vol_4f
+mod_vol_1f
+mod_vol_al
+mod_hpi_al
+mod_pfn_rate
+mod_pfn
+mod_evic_rt
+mod_med_4f
+```
+As shown above, there appears to be a stronger slope with crime. However, if you take a look at the graph for crime and mean particulate levels (outlined in purple on the bottom left corner), you'd notice that most of the graph is influenced by a single group of values. Turns out these are all associated with Midtown Manhattan, where it's most likely property crime driving the rates so high. Tourism is especially huge in Midtown Manhattan, where you'll find Times Square, 42nd Street, etc., and because of that, it's likely most of the crimes reported there are due to tourists having their wallets snatched from them. 
+
+Now, we need to observe their R-squared.
+```{r}
+summary(mod_crime)$r.squared
+summary(mod_vol_4f)$r.squared
+summary(mod_vol_1f)$r.squared
+summary(mod_vol_al)$r.squared
+summary(mod_hpi_al)$r.squared
+summary(mod_pfn_rate)$r.squared
+summary(mod_pfn)$r.squared
+summary(mod_evic_rt)$r.squared
+summary(mod_med_4f)$r.squared
+```
+So, clearly, there is no strong correlation between any of these variables here. Let's look at the residual graphs now.
+
+```{r}
+par(mfrow=c(3,3))
+plot(mod$model$crime_all_rt, mod$residuals, main = "PM2.5 vs. Crime")
+plot(mod$model$volume_4f, mod$residuals, main = "PM2.5 vs. Payments for 2-4 unit homes")
+plot(mod$model$volume_1f, mod$residuals, main = "PM2.5 vs. Payments for 1 unit homes")
+plot(mod$model$volume_al, mod$residuals, main = "PM2.5 vs. Payments for all homes")
+plot(mod$model$hpi_al, mod$residuals, main = "PM2.5 vs. Price changes for all property")
+plot(mod$model$pfn_fam14condo_rate, mod$residuals, main = "PM2.5 vs. Foreclosure Rates")
+plot(mod$model$pfn_fam14condo, mod$residuals, main = "PM2.5 vs. Total Foreclosures")
+plot(mod$model$priv_evic_filing_rt, mod$residuals, main = "PM2.5 vs. Eviction Rates")
+plot(mod$model$med_r_4f, mod$residuals, main = "PM2.5 vs. Median Rent for 2-4 unit homes")
+```
+So there appears to be one point in each of these graphs that's standing out amongst the crowd. The distribution doesn't appear to be too out of the ordinary, but it does appear to show a level of significance among each of these variables. 
+
+```{r}
+mod_edu <- lm(Demo2.5$mean ~ (Demo2.5$pct_prof_math*Demo2.5$pct_prof_ela))
+summary(mod_edu)
+```
+
+I also checked for autocorrelation between these two variables. Looks like they're pretty good. 
+```{r}
+plot(mod$model$pct_prof_ela, mod$model$pct_prof_math)
+```
+
+Now, we should take a look at how influential each point appears to be.  The more influential they are, the greater an effect they have on our data. To measure that, I used the Cooks Distance to get an idea of how unusual each point is. 
+```{r}
+N <- 395
+k <- 17
+
+plot(cooks.distance(mod), pch = 16)
+cutoff = 4/ (N-k-1)
+abline(h=cutoff,lty=2, col = 'red')
+
+cooks.distance(mod)[which.max(cooks.distance(mod))]
+plot(mod,which=4)
+```
+
+As we can see, quire a few of our data points appear to be above the cutoff line. Not such a great look for our data now, is it? 
+```{r}
+library(broom)
+augment(mod)
+```
+
+Here's how I cleaned the outliers out. First, I lined each data point up by their Cook's Distance values, then made a new dataset which only contains the influential points. I then used those points to unjoin them from the model and store them into a new one. While this did improve the R-squared value for the model overall, I did notice there was one point that suddenly became even more influential to the data when I took a second look at it using the Cook's Distance. Upon seeing that, I immediately removed it from the dataset. 
+```{r}
+cooksd <- cooks.distance(mod)
+influential <- names(cooksd)[(cooksd > (cutoff))]
+mod_screen <- mod$model[influential, ]
+mod_screen
+mod_clean <- mod$model %>% anti_join(mod_screen)
+#mod_clean <- mod_clean[-25,]
+mod_clean <- lm(mean ~ ., data = mod_clean)
+summary(mod_clean)
+```
+
+```{r}
+mod_vol_4f_clean <- lm(mod_clean$model$mean ~ mod_clean$model$volume_4f)
+mod_vol_1f_clean <- lm(mod_clean$model$mean ~ mod_clean$model$volume_1f)
+mod_vol_al_clean <- lm(mod_clean$model$mean ~ mod_clean$model$volume_al)
+#mod_vol_cn_clean <- lm(mod_clean$model$mean ~ mod_clean$model$volume_cn)
+mod_vol_4f_clean
+mod_vol_1f_clean
+mod_vol_al_clean
+#mod_vol_cn_clean
+```
+
+```{r}
+summary(mod_vol_4f_clean)$r.squared
+summary(mod_vol_1f_clean)$r.squared
+summary(mod_vol_al_clean)$r.squared
+#summary(mod_vol_cn_clean)$r.squared
+```
+```{r}
+plot(mod_clean$model$volume_4f, mod_clean$model$population_density, pch = 16)
+plot(mod_clean$model$volume_1f, mod_clean$model$population_density, pch = 16)
+plot(mod_clean$model$volume_al, mod_clean$model$population_density, pch = 16)
+#plot(mod_clean$model$volume_cn, mod_clean$model$population_density, pch = 16)
+```
+
+```{r}
+plot(mod_clean$model$population_density, mod_clean$model$mean, pch = 16)
+```
+
+```{r}
+mod_density_clean <- lm(mod_clean$model$mean ~ mod_clean$model$population_density)
+summary(mod_density_clean)$r.squared
+```
+
+
+After having cleaned the data, it would appear the model as a whole is a bit more linear. However, crime has lost its level of significance, while significance for the volume of payments toward condos has gone up.  
+```{r}
+plot(mod_clean)
+```
+
+To get a better look at how much the data points have changed, I thought I'd take a second look at the cleaned data using the Cook's Distance to see if there are any new influential points. Sure enough, there are new outliers in the data. One such outlier, point 25, Greenwich Village/SoHo in 2019, suddenly shot up to 0.2, which was clearly way too far off from the rest of the data, where the next highest outlier only had a distance of 0.031.
+```{r}
+plot(cooks.distance(mod_clean))
+N <- 376
+k <- 17
+cutoff = 4/ (N-k-1)
+cutoff
+cooks.distance(mod_clean)[which.max(cooks.distance(mod_clean))]
+abline(h=cutoff,lty=2, col = 'red')
+```
+
+Now that we have our freshly cleaned dataset, let's take a look at how much these points have changed on the graphs.
+```{r}
+#par(mfrow=c(3,3))
+plot(mod_clean$model$crime_all_rt, mod_clean$model$mean, main = "PM2.5 vs. Crime", pch = 16)
+abline(lm(mod_clean$model$mean ~ mod_clean$model$crime_all_rt), col = 'red', lwd = 2)
+plot(mod_clean$model$volume_4f, mod_clean$model$mean, main = "PM2.5 vs. Payments for 2-4 unit homes", pch = 16)
+abline(lm(mod_clean$model$mean ~ mod_clean$model$volume_4f), col = '#CC5500', lwd = 2)
+plot(mod_clean$model$volume_1f, mod_clean$model$mean, main = "PM2.5 vs. Payments for 1 unit homes", pch = 16)
+abline(lm(mod_clean$model$mean ~ mod_clean$model$volume_1f), col = '#8B8000', lwd = 2)
+plot(mod_clean$model$volume_al, mod_clean$model$mean, main = "PM2.5 vs. Payments for all homes", pch = 16)
+abline(lm(mod_clean$model$mean ~ mod_clean$model$volume_al), col = 'darkgreen', lwd = 2)
+plot(mod_clean$model$hpi_al, mod_clean$model$mean, main = "PM2.5 vs. Price changes for all property", pch = 16)
+abline(lm(mod_clean$model$mean ~ mod_clean$model$hpi_al), col = 'blue', lwd = 2)
+plot(mod_clean$model$pfn_fam14condo_rate, mod_clean$model$mean, main = "PM2.5 vs. Pre-Foreclosure Notice Rate", pch = 16)
+abline(lm(mod_clean$model$mean ~ mod_clean$model$pfn_fam14condo_rate), col = '#4B0082', lwd = 2)
+plot(mod_clean$model$pfn_fam14condo, mod_clean$model$mean, main = "PM2.5 vs. Total Pre-Foreclosure Notices", pch = 16)
+abline(lm(mod_clean$model$mean ~ mod_clean$model$pfn_fam14condo), col = 'purple', lwd = 2)
+plot(mod_clean$model$priv_evic_filing_rt, mod_clean$model$mean, main = "PM2.5 vs. Eviction Rate", pch = 16)
+abline(lm(mod_clean$model$mean ~ mod_clean$model$priv_evic_filing_rt), col = '#DAA520', lwd = 2)
+plot(mod_clean$model$med_r_4f, mod_clean$model$mean, main = "PM2.5 vs. Median Rent for 2-4 unit homes", pch = 16)
+abline(lm(mod_clean$model$mean ~ mod_clean$model$med_r_4f), lwd = 2)
+```
+So, as we can see, areas with higher crime rates, more people paying for condominiums, and lower academic performance tend to be in districts with a higher particulate count. Of course, there is still plenty of ambiguity in the data, but that is to be expected. What I found strange is that after having done the Cook's Distance test and clearing out almost 25 outliers, the level of significance for crime and price changes have gone down, while significance for volume of condo payments has gone up. 
+
+Okay, now let's take a deeper look into a borough-by-borough analysis. I'll start with the same linear model as last time, except this time I'll limit it by districts in each borough. 
+
+## Borough Analysis
+
+First off, we have Manhattan. The difficulty with this one is that Manhattan seems to tell a different story regarding where PM2.5 is more of a problem.  Rather than marginalized communities (in this case, Harlem), PM2.5 is more common in business districts and tourist attractions such as Midtown Manhattan, where we'll find some of the most popular destinations, like Times Square, or Broadway. 
+```{r}
+mod_manhattan <- lm(mean ~ year + crime_all_rt + crime_viol_rt + hpi_al + lp_all + med_r_4f + med_r_cn + pct_prof_ela + pct_prof_math + pfn_fam14condo + priv_evic_amt_sought_med_adj + priv_evic_filings + volume_al + volume_cn + population_density, data = Demo2.5, subset = (Geo.Join.ID<120))
+mod_manhattan_clean <- mod_manhattan$model[-10,]
+mod_manhattan_clean <- lm(mean ~ ., data = mod_manhattan_clean)
+summary(mod_manhattan)
+plot(mod_manhattan)
+```
+
+As expected, the Bronx appears to prove my point the most. Each factor provided seems to align well, and the overall R-squared is 94%, which makes this model a great fit. What seems a bit strange about this data, however, is how individual significance for each factor appears to be lacking. Even the intercept is just barely within the full level of significance. For this particular model, it would appear *total_viol_rate*, or total housing violations within each district, bares stronger significance than mean PM2.5 levels on its own.  In addition, condo price increases are also fairly strong in terms of significance. 
+```{r}
+mod_bronx <- lm(mean ~ year + crime_all_rt + crime_prop_rt + crime_viol_rt + hpi_1f + hpi_al + hpi_cn + lp_all + med_r_1f + med_r_4f + med_r_cn + med_r_ot + pct_prof_ela + pfn_fam14condo + pfn_fam14condo_rate + priv_evic_amt_sought_med_adj + priv_evic_filing_rt + priv_evic_filings + total_viol_rate + volume_1f + volume_cn, data = Demo2.5, subset = (Geo.Join.ID > 200 & Geo.Join.ID < 220))
+summary(mod_bronx)
+plot(mod_bronx)
+```
+
+Brooklyn appears to be the most normal of the five boroughs. This could partially be due to the fact that it has 18 districts, thus, making it easier for the data to come together as a whole. 
+```{r}
+mod_brooklyn <- lm(mean ~ crime_prop_rt + hpi_1f + hpi_4f + lp_fam14condo_rate + lp_fam14condo_repeat + med_r_1f + med_r_4f + med_r_ot + pct_prof_ela + pct_prof_math + pfn_fam14condo_rate + priv_evic_amt_sought_med_adj + priv_evic_filing_rt + priv_evic_filings + total_viol_rate + volume_1f + volume_4f + volume_al + volume_cn + population_density, data = Demo2.5, subset = (Geo.Join.ID > 300 & Geo.Join.ID < 320))
+summary(mod_brooklyn)
+plot(mod_brooklyn)
+```
+
+From the looks of it, Queens appears to be a little bit less normal in terms of its distribution. The highest three points on the QQ-Norm plot appear to be much less evenly distributed with the rest of the residuals. However, there appear to be more disconnects starting from the top 15 residuals. Even when I tried removing one significantly abnormal point from the graph, there were still plenty of abnormalities in the data. Thus, this model does not appear to be the best fit for Queens. 
+```{r}
+mod_queens <- lm(mean ~ crime_prop_rt + crime_viol_rt + hpi_1f + hpi_al + hpi_cn + lp_all + med_r_1f + med_r_cn + pct_prof_ela + pfn_fam14condo + pfn_fam14condo_rate + priv_evic_filing_rt + priv_evic_filings + total_viol_rate + volume_4f + population_density, data = Demo2.5, subset = (Geo.Join.ID > 400 & Geo.Join.ID < 420))
+mod_queens_clean <- mod_queens$model[-81,]
+mod_queens_clean
+mod_queens_clean <- lm(mean ~ ., data = mod_queens_clean)
+summary(mod_queens)
+plot(mod_queens)
+```
+
+Now, here's where things get kinda tricky. Staten Island only has three districts, meaning it's most likely that there are more factors than data points for this linear model, which will end up throwing the whole thing off. 
+```{r}
+mod_Staten_Island <- lm(mean ~ crime_all_rt + crime_prop_rt + lp_all + lp_fam14condo_initial + lp_fam14condo_repeat + med_r_1f + med_r_4f + med_r_cn + pct_prof_ela, data = Demo2.5, subset = (Geo.Join.ID > 500 & Geo.Join.ID < 520))
+summary(mod_Staten_Island)
+plot(mod_Staten_Island)
+```
+
+All-in-all, what each of these models seem to convey is that air pollution has an effect on academic performance, 
