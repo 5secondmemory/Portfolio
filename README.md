@@ -19,3 +19,4 @@ Database Management @ Cogentiv Solutions
 
 ### Projects
 ** Air Quality in Marginalized Communities **
+[Presentation](https://github.com/5secondmemory/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities.pdf)
