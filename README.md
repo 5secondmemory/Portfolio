@@ -3,6 +3,7 @@ Here's where I'll store all my projects in programs like R and more.
 
 ### Education
 Math, BS | University of Massachusetts Amherst
+
 Data Analytics & Computational Social Sciences, MS | University of Massachusetts Amherst
 
 ### Work Experience
