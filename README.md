@@ -20,3 +20,4 @@ Database Management @ Cogentiv Solutions
 ### Projects
 ** Air Quality in Marginalized Communities **
 [Presentation](https://github.com/5secondmemory/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities.pdf)
+<img src=Images/PM2.5 vs Crime by Borough Chart width="600">
