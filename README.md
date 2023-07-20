@@ -6,6 +6,9 @@ Math, BS | University of Massachusetts Amherst
 
 Data Analytics & Computational Social Sciences, MS | University of Massachusetts Amherst
 
+### Relevant Coursework
+GIS/Remote Sensing (Spatial Analytics using Python), Statistical Computing (Web Query & Scraping/Data Mining/Data Wrangling/Analysis), Regression Analysis (Predictive Analytics), Data Visualization, Probability, Discrete Structures, Scientific Computing, Programming with Data Structures
+
 ### Work Experience
 Business Intelligence Analyst @ PGIM Fixed Income
 - Automated processes/workflows used in the analysis of regularly updated data housed in several Tableau servers in order to identify trends and changes
@@ -19,6 +22,9 @@ Data Science Researcher @ World Data Science Institute
 
 Database Management @ Cogentiv Solutions
 - Used Microsoft Excel and SQL to maintain and develop a database on carbon capture & utilization projects globally
+
+### Skills
+Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Confluence, Power BI, Python, and SQL. Experienced in LaTeX, MATLAB, Java, C#, GCP App Engine, Flask, Django, Jupyter Notebooks and Scala. 
 
 ### Projects
 ** Air Quality in Marginalized Communities **
