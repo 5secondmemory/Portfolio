@@ -1,5 +1,4 @@
 # Portfolio
-Here's where I'll store all my projects in programs like R and more.
 
 ### Education
 Math, BS | University of Massachusetts Amherst
