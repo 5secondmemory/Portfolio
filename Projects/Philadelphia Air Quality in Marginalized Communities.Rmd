@@ -1,0 +1,420 @@
+---
+title: "Philadelphia Air Quality in Marginalized Communities"
+author: "Will Munson"
+date: "2023-08-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+  Air pollution is a rather prevalent issue in most urban areas.  While most people know that fine particulates in the air make it harder to breathe, what people do not seem to realize is poor air quality can lead to long-term health problems as well.  These issues range from slowed brain development in young children to various forms of cancer.  Although most urban areas are working towards lowering emissions, air pollution is still more prevalent in certain areas than others.  More specifically, marginalized communities are more likely to live in areas where the pollution levels are higher.  
+  
+  In this research paper, we will be taking a closer look at Philadelphia and some of its surrounding suburbs to see how air quality differs in each area.  Philadelphia is fairly well-known for its problems with air quality in certain areas, and even moreso in communities like Chester, where the local incinerator plant, Covanta, releases harmful chemicals into the air surrounding the community, and those who live there are at a higher risk of breathing problems and cancer. 
+  
+  This research is intended for people who are actively involved in Environmental Justice programs, or environmental advocates as a whole. This could be used for the purpose of revealing how companies like Covanta are putting communities like Chester through dangerous situations, and endangering the lives of those who live there.  
+
+## Setting up the data lists
+
+```{r, include=FALSE}
+library(tidyverse)
+library(lubridate)
+```
+
+  Starting off with the census data, we have median age, median income, racial makeup, educational attainment, and total number of citizens below the poverty line. Each of these datasets were pulled from the CensusReporter website, which lists all of the thirteen different study areas we will cover for this project. 
+```{r, include=FALSE}
+med_age_sex <- read.csv("C:/Users/wmuns/Downloads/Median Age/acs2021_5yr_B01002_79500US4203211/Median Age by Sex.csv")
+income <- read.csv("C:/Users/wmuns/Downloads/Median Income/acs2021_5yr_B06011_79500US4203211/Median income by place of birth.csv")
+race <- read.csv("C:/Users/wmuns/Downloads/Race/acs2021_5yr_B02001_79500US4203211/Race Demographics.csv")
+Education <- read.csv("C:/Users/wmuns/Downloads/Education Levels/acs2021_5yr_B15003_79500US4203211/Educational attainment.csv")
+poverty <- read.csv("C:/Users/wmuns/Downloads/Poverty Status/acs2021_5yr_B17020_79500US4203211/Poverty status by age group.csv")
+```
+
+
+```{r, include=FALSE}
+med_age_sex_fix <- med_age_sex %>%
+  select_if(~!(all(is.na(.)) | all(. == ""))) %>%
+  select(contains(c("geoid", "name", "Median.Age")))
+
+med_age_sex_fix
+
+```
+
+```{r, include=FALSE}
+income_fix <- income %>%
+  select_if(~!(all(is.na(.)) | all(. == "")))%>%
+  select(contains(c("geoid", "name", "Overall.Median.Income")))
+income_fix
+```
+
+```{r, include=FALSE}
+race_fix <- race %>%
+  pivot_longer(c(`White`, `Black`, `Native.American`, `Asian`, `Pacific.Islander`, `Other`, `Multiracial`, `Two.races.including.other`, `Two.races.excluding.other`), names_to = "Race", values_to = "Count") %>%
+  select(-contains(".Error"))
+#  pivot_longer(c(`Population..Error`, `White..Error`, `Black..Error`, `Native.American..Error`, `Asian..Error`, `Pacific.Islander..Error`, `Other..Error`, `Multiracial..Error`, `Two.races.including.other..Error`, `Two.races.excluding.other..Error`), names_to = "Race", values_to = "Error")
+
+# left_join(TidyRaceA, TidyRaceB)
+```
+
+```{r,include=FALSE}
+Education_Fix <- Education %>%
+  pivot_longer(c(`No.Schooling.Completed`, `High.School.Diploma`, `GED.or.Alternate.Credential`, `Some.College..less.than.1.year`, `Some.College..1.or.more.years..no.degree`, `Associates.degree`, `Bachelors.degree`, `Masters.degree`, `Professional.school.degree`, `Doctorate.degree`), names_to = "EducationLevel", values_to = "Count") %>%
+  select(-contains(".Error")) %>%
+  select(-contains(".Grade")) %>%
+  select(-contains("Nursery")) %>%
+  select(-contains("Kindergarten"))
+```
+
+```{r, include=FALSE}
+pov_tidy <- poverty %>%
+  select(-contains("B17")) %>%
+  select(-contains("Population"))
+```
+
+```{r, include=FALSE}
+Demo_Phili_1 <- merge(med_age_sex_fix, income_fix, by = c("geoid", "name"))
+Demo_Phili_1 <- merge(Demo_Phili_1, race_fix, by = c("geoid", "name"))
+#Demo_Phili <- merge(Demo_Phili, Education_Fix, by = c("geoid", "name"))
+Demo_Phili_1 <- merge(Demo_Phili_1, pov_tidy, by = c("geoid", "name"))
+summary(Demo_Phili_1)
+```
+
+```{r, include=FALSE}
+Demo_Phili_2 <- merge(med_age_sex_fix, income_fix, by = c("geoid", "name"))
+#Demo_Phili_1 <- merge(Demo_Phili_1, race_fix, by = c("geoid", "name"))
+Demo_Phili_2 <- merge(Demo_Phili_2, Education_Fix, by = c("geoid", "name"))
+Demo_Phili_2 <- merge(Demo_Phili_2, pov_tidy, by = c("geoid", "name"))
+summary(Demo_Phili_2)
+```
+  Due to the variability in both education and race, combined with the lack of data provided that shows how many people of each race fall within a certain educational background, two datasets were generated in order to provide insight without adding confusion. 
+
+## Pollution data
+
+  All of the data was pulled from live monitoring stations, which are then shared to the World Air Quality Project website, Air Quality Index China (AQICN). Some of these monitoring stations contain data from as far back as 2019, while others only have data from this year. Due to the potential inconsistencies, the best course of action was to take the means of every median PM2.5 measurement taken. As previously mentioned, there were thirteen different areas being observed, each listed below. 
+
+- Far Northeast
+```{r, include=FALSE}
+Far_NE <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Northeast Phili/Far Northeast/wildflowersomertonCAC Northeast Phili PM2.5 Levels.csv")
+Far_NE$date <- gsub("T.*","",Far_NE$date)
+Far_NE$date <- as.Date(ymd(Far_NE$date))
+Far_NE$geoid <- "79500US4203201"
+Far_NE_fix <- Far_NE %>%
+  group_by(geoid) %>%
+  summarise(mean = mean(median), median = median(median))
+```
+
+- Near Northeast (East and West)
+```{r, include=FALSE}
+Near_NE_E <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Northeast Phili/Near Northeast East/Academy Gardens Northeast Phili PM2.5 Levels.csv")
+Near_NE_E$date <- gsub("T.*","",Near_NE_E$date)
+Near_NE_E$date <- as.Date(ymd(Near_NE_E$date))
+Near_NE_E$geoid <- "79500US4203203"
+Near_NE_E_fix <- Near_NE_E %>%
+  group_by(geoid) %>%
+  summarise(mean = mean(median), median = median(median))
+```
+
+
+```{r,include=FALSE}
+Near_NE_W <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Northeast Phili/NE Elkins Park PA.^J Abington Near NE Phili PM2.5 Levels.csv")
+Near_NE_W$date <- gsub("T.*","",Near_NE_W$date)
+Near_NE_W$date <- as.Date(ymd(Near_NE_W$date))
+Near_NE_W$geoid <- "79500US4203202"
+Near_NE_W_fix <- Near_NE_W %>%
+  group_by(geoid) %>%
+  summarise(mean = mean(median), median = median(median))
+```
+
+- North
+```{r,include=FALSE}
+North <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Northwest Phili/North Phili/Nueva Esperanza inc. Northwest Phili PM2.5 Levels.csv")
+North$date <- gsub("T.*","",North$date)
+North$date <- as.Date(ymd(North$date))
+North$geoid <- "79500US4203204"
+North_fix <- North %>%
+  group_by(geoid) %>%
+  summarise(mean = mean(median), median = median(median))
+```
+
+- Northwest
+```{r,include=FALSE}
+Northwest <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Northwest Phili/BruisAir Northwest Phili PM2.5 Levels.csv")
+Northwest$date <- gsub("T.*","",Northwest$date)
+Northwest$date <- as.Date(ymd(Northwest$date))
+Northwest$geoid <- "79500US4203206"
+Northwest_fix <- Northwest %>%
+  group_by(geoid) %>%
+  summarise(mean = mean(median), median = median(median))
+```
+
+- Central
+```{r,include=FALSE}
+Drexel <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/North Phili/Academy of Natural Sciences of Drexel University Central Phili PM2.5 Levels.csv")
+Charles <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/North Phili/Charles Library North Phili PM2.5 Levels.csv")
+Green12 <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/North Phili/Green and 12th Philly North Phili PM2.5 Levels.csv")
+Iglesias <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/North Phili/Iglesias Gardens North Phili PM2.5 Levels.csv")
+Kieren <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/North Phili/KierenTimberlake North Phili PM2.5 Levels.csv")
+Francisville <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/North Phili/westchesterwyliestfrancisville North Phili PM2.5 Levels.csv")
+```
+```{r,include=FALSE}
+Central <- rbind(Drexel, Charles, Green12, Iglesias, Kieren, Francisville)
+Central <- Central %>%
+  group_by(date) %>%
+  summarise(minimum = min(min, na.rm = T), medians = median(median), maximum = max(max))
+
+Central$date <- gsub("T.*","",Central$date)
+Central$date <- as.Date(ymd(Central$date))
+Central$geoid <- "79500US4203207"
+Central_fix <- Central %>%
+  group_by(geoid) %>%
+  summarise(mean = mean(medians), median = median(medians))
+```
+
+- East (River Wards)
+```{r,include=FALSE}
+Backyard <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Kensington area of Phili/Back Yard Kensington area PM2.5 levels.csv")
+Boston <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Kensington area of Phili/Boston St. Kensington area PM2.5 Levels.csv")
+Cumberland <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Kensington area of Phili/E Cumberland and Gaul Kensington area PM2.5 Levels.csv")
+LasParcelas <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Kensington area of Phili/Las Parcelas Kensington area PM2.5 Levels.csv")
+```
+```{r,include=FALSE}
+East <- rbind(Backyard, Boston, Cumberland, LasParcelas)
+East <- East %>%
+  group_by(date) %>%
+  summarise(minimum = min(min, na.rm = T), medians = median(median), maximum = max(max))
+
+East$date <- gsub("T.*","",East$date)
+East$date <- as.Date(ymd(East$date))
+East$geoid <- "79500US4203205"
+East_fix <- East %>%
+  group_by(geoid) %>%
+  summarise(mean = mean(medians), median = median(medians))
+```
+
+- West
+```{r,include=FALSE}
+Pine47 <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/West Phili/47th and Pine West Phili PM2.5 Levels.csv")
+CACmantauve <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/West Phili/CACmantuave West Phili PM2.5 Levels.csv")
+```
+```{r,include=FALSE}
+West <- rbind(Pine47, CACmantauve)
+West <- West %>%
+  group_by(date) %>%
+  summarise(minimum = min(min, na.rm = T), medians = median(median), maximum = max(max))
+
+West$date <- gsub("T.*","",West$date)
+West$date <- as.Date(ymd(West$date))
+West$geoid <- "79500US4203208"
+West_fix <- West %>%
+  group_by(geoid) %>%
+  summarise(mean = mean(medians), median = median(medians))
+```
+
+- Center City
+```{r,include=FALSE}
+Fitler <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Central Phili/Fitler Square Central Phili PM2.5 levels.csv")
+Symphony <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Central Phili/Symphony House Central Phili PM2.5 Levels.csv")
+WashWest <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Central Phili/Wash West Central Phili PM2.5 Levels.csv")
+```
+```{r,include=FALSE}
+CenterCity <- rbind(Fitler, Symphony, WashWest)
+CenterCity <- CenterCity %>%
+  group_by(date) %>%
+  summarise(minimum = min(min, na.rm = T), medians = median(median), maximum = max(max))
+
+CenterCity$date <- gsub("T.*","",CenterCity$date)
+CenterCity$date <- as.Date(ymd(CenterCity$date))
+CenterCity$geoid <- "79500US4203209"
+CenterCity_fix <- CenterCity %>%
+  group_by(geoid) %>%
+  summarise(mean = mean(medians), median = median(medians))
+```
+
+- Southwest
+```{r,include=FALSE}
+Southwest <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Southwest Phili/Drexel Southwest Phili PM2.5 Levels.csv")
+Southwest$date <- gsub("T.*","",Southwest$date)
+Southwest$date <- as.Date(ymd(Southwest$date))
+Southwest$geoid <- "79500US4203210"
+Southwest_fix <- Southwest %>%
+  group_by(geoid) %>%
+  summarise(mean = mean(median), median = median(median))
+```
+
+- Southeast
+```{r,include=FALSE}
+Annin <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/South Phili/Annin St South Phili PM2.5 levels.csv")
+S04 <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/South Phili/S 04 St South Phili PM2.5 Levels.csv")
+S2Christian <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/South Phili/South 2nd St and Christian St South Phili PM2.5 Levels.csv")
+```
+```{r,include=FALSE}
+Southeast <- rbind(Annin, S04, S2Christian)
+Southeast <- Southeast %>%
+  group_by(date) %>%
+  summarise(minimum = min(min, na.rm = T), medians = median(median), maximum = max(max))
+
+Southeast$date <- gsub("T.*","",Southeast$date)
+Southeast$date <- as.Date(ymd(Southeast$date))
+Southeast$geoid <- "79500US4203211"
+Southeast_fix <- Southeast %>%
+  group_by(geoid) %>%
+  summarise(mean = mean(medians), median = median(medians))
+```
+
+- Chester, PA
+```{r,include=FALSE}
+Crozier <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Chester/Crozier Library Chester PA PM2.5 Levels.csv")
+Widener <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Chester/Widener University Chester PA PM2.5 Levels.csv")
+```
+```{r,include=FALSE}
+Chester <- rbind(Crozier, Widener)
+Chester <- Chester %>%
+  group_by(date) %>%
+  summarise(minimum = min(min, na.rm = T), medians = median(median), maximum = max(max))
+
+Chester$date <- gsub("T.*","",Chester$date)
+Chester$date <- as.Date(ymd(Chester$date))
+Chester$geoid <- "16000US4213208"
+Chester_fix <- Chester %>%
+  group_by(geoid) %>%
+  summarise(mean = mean(medians), median = median(medians))
+```
+
+- Camden, NJ
+```{r,include=FALSE}
+Waterfront <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Camden/Waterfront Camden NJ PM2.5 Levels.csv")
+Cooper <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Camden/Cooper Plaza Camden NJ PM2.5 Levels.csv")
+CET <- read.csv("C:/Users/wmuns/OneDrive/Documents/Phili Project Data Files/Camden/Center for Environmental Transformation Camden NJ PM2.5 Levels.csv")
+```
+```{r,include=FALSE}
+Camden <- rbind(Waterfront, Cooper, CET)
+Camden <- Camden %>%
+  group_by(date) %>%
+  summarise(minimum = min(min, na.rm = T), medians = median(median), maximum = max(max))
+
+Camden$date <- gsub("T.*","",Camden$date)
+Camden$date <- as.Date(ymd(Camden$date))
+Camden$geoid <- "16000US3410000"
+Camden_fix <- Camden %>%
+  group_by(geoid) %>%
+  summarise(mean = mean(medians), median = median(medians))
+```
+
+  A total of 24 different monitoring stations were used throughout the Philadelphia area, while 2 were used for Chester and 3 were used for Camden. These stations were then assigned to groups based off of where they are throughout the city. The exact location of each monitoring station may not accurately reflect the areas they are listed in.  For example, Near Northeast Philadelphia did not have any monitoring stations in either the east or west portions of the area, meaning the data used for both those areas were ballpark measurements that were taken using nothing more than the naked eye and simple judgement.  For the western half of Near Northeast Philadelphia, the closest monitoring station, located in Abington, PA, was used in order to fill the gap in the data. 
+
+```{r,include=FALSE}
+Phili_PM2.5 <- rbind(Camden_fix, Chester_fix, Far_NE_fix, Near_NE_E_fix, Near_NE_W_fix, North_fix, Northwest_fix, CenterCity_fix, Central_fix, West_fix, Southeast_fix, Southwest_fix, East_fix) 
+Demo_Phili_1 <- merge(Demo_Phili_1, Phili_PM2.5, by = "geoid")
+#Demo_Phili_1
+```
+
+```{r,include=FALSE}
+Demo_Phili_2 <- merge(Demo_Phili_2, Phili_PM2.5, by = "geoid")
+#Demo_Phili_2
+```
+
+## Data Analysis and Models
+
+```{r, include=FALSE}
+library(ggplot2)
+```
+
+  Linear models were developed in order to get a better understanding the significance of each of the factors on PM2.5 concentration. The four factors in our first model were:
+  
+  - The proportion of people in a given area by racial makeup
+  
+  - the average age of people in the area
+  
+  - the average income of the overall population of a given area
+  
+  - The total number of people below the poverty line in a given area
+  
+```{r, include=FALSE}
+mod_race <- (lm(mean ~ (Count/Population) + Median.Age + Overall.Median.Income + Total.Below.Poverty.Line, data = Demo_Phili_1))
+summary(mod_race)
+```
+  
+  When observing the linear model for the first dataset, median age and income had higher levels of statistical significance, and total number of citizens below the poverty line was considered moderately statistically significant. The total number of people within a specific racial makeup and Population were compared for interaction to show if the proportion of each race had more significance than the count alone. This was not the case - the model still shows that the data was statistically insignificant. 
+  
+  For the second model, we compare the median PM2.5 levels in a given area to the same values, except the only thing changed was the proportion of people by education level to the population. 
+
+```{r, include=FALSE}
+mod_edu <- (lm(median ~ Count/Population + Median.Age + Overall.Median.Income + Total.Below.Poverty.Line, data = Demo_Phili_2))
+summary(mod_edu)
+```
+
+  This model also shows that median age is strongly statistically significant to the median, but so are poverty levels. Median income appears to have decreased statistical significance, but still stands out here. However, once again, both the count and proportion of citizens by education level did not show any statistical significance for our data. However, even though our linear models do not show statistical significance with our race and education level variables, this does not mean they are completely insignificant.  
+  
+  After generating the linear models, the next step is to generate residual graphs. These will show if our data has any discrepancies within the model.  What we are looking for here is anything that appears to stick out amongst the rest of the data points. This means anything that seems to deviate away from the norm.  Essentially, if most of the points fall within the dotted line on the Q-Q Residual graph, or fall closer to 0 on the normal residual graph, but a group of them are visibly higher or lower than the norm, those are where we find discrepancies. 
+
+```{r, echo=FALSE}
+layout_matrix_1 <- matrix(1:4, ncol = 2) 
+layout(layout_matrix_1)
+plot(mod_race, pch = 16, sub.caption=" ")
+```
+
+  After generating the plots, there seemed to be a strange pattern in the way the data is structured here - most of the points here are clustered in distinguishable groups. Since only two of the variables had any differences between each area of Philadelphia, the result is a clustered plot like this.
+  
+  While this might be relatively inefficient, our data does show one group that deviates from the norm. Upon taking a closer look, we realize that this cluster is affiliated with Southeast Philadelphia, which has a mean PM2.5 level of 5.1 ppm and median of 2.39 ppm. This is a relatively quiet area of Philadelphia. Compared to the rest of the city, Southeast Philadelphia is less populated and more spread out, and the only potential reason for any activity being a sports event. Southeast Philadelphia contains the South Philadelphia Sports Complex, which is home to Lincoln Financial Field (Eagles), Citizens Bank Park (Phillies), and Wells Fargo Center (76ers).  This means the only time there might be any sign of high PM2.5 levels is if there is a major sports event is happening in the area. 
+  
+  Now, let's take a look and see if there is any major differentiation in the data when we compare the median values with Educational Attainment. 
+
+```{r, echo=FALSE}
+layout(layout_matrix_1)
+plot(mod_edu, pch = 16, sub.caption=" ")
+```
+
+  Again, the study has produced similar results. Essentially, what this tells us is that median age, income, and total number of residents below the poverty line have more of an impact on our data than the other two variables. A better way of looking at this is to compare the residuals of both our linear models to the total count of citizens within a specific racial makeup or educational background. 
+    
+```{r, echo=FALSE}
+e <- ggplot(mod_race, aes((mod_race$model$Count/Demo_Phili_1$Population), mod_race$residuals, color = Demo_Phili_1$Race))
+e + geom_point() + scale_colour_brewer(palette = "Set1") + xlab("Proportion by Race") + ylab("Residuals")
+```
+
+  Although the linear model for race says that the race value is not statistically significant to our study, this graph appears to show one detail that says the opposite. Southeast Philadelphia is the only majority-white area shown on the graph, and since it is the one measurement area that deviates far away from the norm, this means that there could be a potential racial bias within the Philadelphia metro area. 
+
+```{r, echo=FALSE, warning=FALSE}
+f <- ggplot(mod_edu, aes((mod_edu$model$Count/Demo_Phili_2$Population), mod_edu$residuals, color = Demo_Phili_2$EducationLevel))
+f + geom_point() + scale_colour_brewer(palette = "Accent") + xlab("Proportion by Education Level") + ylab("Residuals")
+```
+
+  Unfortunately, when looking at the graph for the proportion of citizens by education level and its residuals, there does not appear to be anything that stands out from the data. Therefore, education level does not appear to show much of a pattern here. While this might not seem very useful, perhaps there is still more we could look into. 
+
+```{r, include=FALSE}
+g <- ggplot(mod_race, aes(x = mod_race$model$Overall.Median.Income, y = mod_race$residuals, color = Demo_Phili_1$Race))
+g + geom_point() + scale_colour_brewer(palette = "Set1") + xlab("Median Income") + ylab("Residuals") + scale_x_log10()
+```
+
+
+
+```{r, include=FALSE}
+h <- ggplot(mod_edu, aes(x = mod_edu$model$Overall.Median.Income, y = mod_edu$residuals, color = Demo_Phili_2$EducationLevel))
+h + geom_point() + scale_x_log10()
+```
+
+What our findings show us is that median income, poverty and the average age of the residents do appear to have a pattern with the average amount of PM2.5 levels in a particular area of the city. While race and education may not matter when it comes to how high the PM2.5 levels are, the data does appear to show discrepancies between predominantly black versus predominantly white areas of the city. 
+
+## Works Cited
+
+
+  CE Data Reporting. “Air_Emissions_Report - Power BI Report Server.” Live Data Report. Accessed August 9, 2023. http://cedatareporting.pa.gov/reports/powerbi/Public/DEP/AQ/PBI/Air_Emissions_Report.
+
+
+
+  Census Reporter. “Grid View: Table B15003 - Census Reporter.” Accessed August 14, 2023. https://censusreporter.org/data/table/?table=B15003&geo_ids=79500US4203201,79500US4203202,79500US4203203,79500US4203205,79500US4203207,79500US4203209,79500US4203211,79500US4203210,79500US4203204,79500US4203206,79500US4203208,16000US3410000,16000US4213208.
+
+
+
+  “Toxic America.” United Shades of America. CNN, June 16, 2019. https://www.imdb.com/title/tt10467572/.
+
+
+
+  The World Air Quality Index project. “Widener University - Kirkbride Hall, Chester, United States of America Air Pollution: Real-Time Air Quality Index (AQI).” aqicn.org. Accessed August 10, 2023. https://aqicn.org/station/.
+
+
+## Appendix: Code used for this project
+
+```{r ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
+```
