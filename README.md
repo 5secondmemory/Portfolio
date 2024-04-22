@@ -6,7 +6,7 @@ Math, BS | University of Massachusetts Amherst
 Data Analytics & Computational Social Sciences, MS | University of Massachusetts Amherst
 
 ### Relevant Coursework
-GIS/Remote Sensing (Spatial Analytics using Python), Statistical Computing (Web Query & Scraping/Data Mining/Data Wrangling/Analysis), Regression Analysis (Predictive Analytics), Data Visualization, Probability, Discrete Structures, Scientific Computing, Programming with Data Structures
+GIS/Remote Sensing (Spatial Analytics using Python), Time Series Analysis, Statistical Computing (Web Query & Scraping/Data Mining/Data Wrangling/Analysis), Regression Analysis (Predictive Analytics), Data Visualization, Probability, Discrete Structures, Scientific Computing, Programming with Data Structures
 
 ### Work Experience
 Business Intelligence Analyst @ PGIM Fixed Income
