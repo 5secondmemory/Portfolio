@@ -28,7 +28,8 @@ Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Co
 ### Projects
 ** Air Quality in Marginalized Communities **
 [Presentation](https://github.com/5secondmemory/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities.pdf)
+
 ** Lake Meade Water Levels **
-[Poster]
+[Poster](https://github.com/5secondmemory/Portfolio/blob/main/Projects/GIS%20Poster.pdf)
 
 <img src="Images/0000ac.png" class="img-responsive" alt="">
