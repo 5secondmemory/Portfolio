@@ -33,4 +33,4 @@ Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Co
 
 [Lake Meade Water Levels](https://github.com/5secondmemory/Portfolio/blob/main/Projects/GIS%20Poster.pdf)
 
-<img src="Images/0000ac.png" class="img-responsive" alt="">
+<img src="Images/PM2.5 and Crime Rate.png" class="img-responsive" alt="">
