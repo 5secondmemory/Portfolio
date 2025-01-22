@@ -2,7 +2,7 @@
 
 ### Education
 
-Math, BS | University of Massachusetts Amherst
+Mathematics, BS | University of Massachusetts Amherst
 
 Data Analytics, MS | University of Massachusetts Amherst
 
