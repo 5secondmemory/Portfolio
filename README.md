@@ -1,6 +1,7 @@
 # Portfolio
 
 ### Education
+
 Math, BS | University of Massachusetts Amherst
 
 Data Analytics & Computational Social Sciences, MS | University of Massachusetts Amherst
