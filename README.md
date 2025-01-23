@@ -29,7 +29,11 @@ Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Co
 ### Projects
 [Air Quality in Marginalized Communities](https://github.com/5secondmemory/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20(1).pdf)
 
-<img src="Images/Yearly PM2.5 Levels.png" width="200" /> <img src="Images/Distribution of average PM2.5.png" width="200" /> <img src="Images/PM2.5 and Crime Rate.png" width="200" />
+<p align="center">
+  <img src="Images/Yearly PM2.5 Levels.png" align="left" /> 
+  <img src="Images/Distribution of average PM2.5.png"/> 
+  <img src="Images/PM2.5 and Crime Rate.png" align="right" />
+</p>
 
 [Air Quality in Marginalized Communities - Philadelphia](https://github.com/5secondmemory/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20-%20Philadelphia%20edition.pdf)
 
