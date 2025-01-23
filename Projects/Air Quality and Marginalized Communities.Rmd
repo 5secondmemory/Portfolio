@@ -49,7 +49,7 @@ summary(PM2.5_Borough)
 
 
 ```{r}
-i <- ggplot(PM2.5_Borough, aes(Start_Date, mean, group = Geo.Place.Name))
+i <- ggplot(PM2.5_Borough, aes(Start_Date, mean, group = Geo.Place.Name)) + labs(color = "Borough")
 i + geom_line(aes(col = PM2.5_Borough$Geo.Place.Name))
 ```
 
