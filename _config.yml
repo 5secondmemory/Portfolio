@@ -1,4 +1,5 @@
 title: Will Munson
 theme: jekyll-theme-minimal
+classes: wide
 theme_settings:
   max_width: 2000px
