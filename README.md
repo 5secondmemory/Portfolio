@@ -45,4 +45,4 @@ Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Co
 
 ### [Lake Meade Water Levels](https://github.com/5secondmemory/Portfolio/blob/main/Projects/GIS%20Poster.pdf)
 
-
+<img src="Images/Lake Mead Water Levels.png" class="img-responsive" alt="">
