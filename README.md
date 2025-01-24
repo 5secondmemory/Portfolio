@@ -42,6 +42,6 @@ Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Co
 
 <img src="Images/Philadelphia Air Quality by Race Residuals.png" class="img-responsive" alt="">
 
-### [Lake Mead Water Levels](https://github.com/5secondmemory/Portfolio/blob/main/Projects/GIS%20Poster.pdf)
+### [Lake Mead Water Levels](https://github.com/Will-Munson/Portfolio/blob/main/Projects/Lake%20Mead%20Water%20Levels%20GIS%20poster.pdf)
 
 <img src="Images/Lake Mead Water Levels.png" class="img-responsive" alt="">
