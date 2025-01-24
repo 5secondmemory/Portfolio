@@ -27,11 +27,11 @@ Database Management @ Cogentiv Solutions
 Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Confluence, Power BI, Python, and SQL. Experienced in LaTeX, MATLAB, Java, C#, GCP App Engine, Flask, Django, Jupyter Notebooks and Scala. 
 
 ### Projects
-[The Determinants of House Pricing](https://github.com/Will-Munson/Portfolio/blob/main/Projects/The%20Determinants%20of%20House%20Pricing%20(2).pdf)
+### [The Determinants of House Pricing](https://github.com/Will-Munson/Portfolio/blob/main/Projects/The%20Determinants%20of%20House%20Pricing%20(2).pdf)
 
 <img src="Images/House pricing by Elementary School.png" class="img-responsive" alt="">
 
-[Air Quality in Marginalized Communities](https://github.com/5secondmemory/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20(1).pdf)
+### [Air Quality in Marginalized Communities](https://github.com/5secondmemory/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20(1).pdf)
 
 <p align="center">
   <img src="Images/Yearly PM2.5 Levels.png" alt="Image 1" width="200" style="margin: 10px;"> 
@@ -39,10 +39,10 @@ Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Co
   <img src="Images/PM2.5 and Crime Rate.png" alt="Image 3" width="200" style="margin: 10px;">
 </p>
 
-[Air Quality in Marginalized Communities - Philadelphia](https://github.com/5secondmemory/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20-%20Philadelphia%20edition.pdf)
+### [Air Quality in Marginalized Communities - Philadelphia](https://github.com/5secondmemory/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20-%20Philadelphia%20edition.pdf)
 
 <img src="Images/Philadelphia Air Quality by Race Residuals.png" class="img-responsive" alt="">
 
-[Lake Meade Water Levels](https://github.com/5secondmemory/Portfolio/blob/main/Projects/GIS%20Poster.pdf)
+### [Lake Meade Water Levels](https://github.com/5secondmemory/Portfolio/blob/main/Projects/GIS%20Poster.pdf)
 
 
