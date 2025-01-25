@@ -29,7 +29,12 @@ Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Co
 ### Projects
 ### [The Determinants of House Pricing](https://github.com/Will-Munson/Portfolio/blob/main/Projects/The%20Determinants%20of%20House%20Pricing%20(2).pdf)
 
-<img src="Images/House pricing by Elementary School.png" class="img-responsive" alt="">
+<p>
+  <img src="Images/House pricing by Elementary School.png" class="img-responsive" alt="">
+</p>
+<p>
+  <em>Prices of homes based on their proximity to local elementary schools</em>
+</p>
 
 ### [Air Quality in Marginalized Communities](https://github.com/5secondmemory/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20(1).pdf)
 
