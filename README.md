@@ -31,9 +31,9 @@ Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Co
 
 <p>
   <img src="Images/House pricing by Elementary School.png" class="img-responsive" alt="">
+  <em>Prices of homes based on their proximity to local elementary schools.</em>
 </p>
 <p>
-  <em>Prices of homes based on their proximity to local elementary schools.</em>
   <em>Given house prices are higher near Edison Elementary, this must be a prestigious school in the area.</em>
 </p>
 
