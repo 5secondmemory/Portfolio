@@ -36,7 +36,7 @@ Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Co
   <em>Prices of homes based on their proximity to local elementary schools</em>
 </p>
 
-### [Air Quality in Marginalized Communities](https://github.com/5secondmemory/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20(1).pdf)
+### [Air Quality in Marginalized Communities](https://github.com/Will-Munson/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20(2).pdf)
 
 <p align="center">
   <img src="Images/Distribution of Average PM2.5 levels.png" alt="Image 2" width="200" style="margin: 10px;">
