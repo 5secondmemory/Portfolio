@@ -31,10 +31,9 @@ Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Co
 
 <p>
   <img src="Images/House pricing by Elementary School.png" class="img-responsive" alt="">
-  <em>Prices of homes based on their proximity to local elementary schools.</em>
 </p>
 <p>
-  <em>Given house prices are higher near Edison Elementary, this must be a prestigious school in the area.</em>
+  <em>Prices of homes based on their proximity to local elementary schools.\ Given house prices are higher near Edison Elementary, this must be a prestigious school in the area.</em>
 </p>
 
 ### [Air Quality in Marginalized Communities](https://github.com/Will-Munson/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20(2).pdf)
