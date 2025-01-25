@@ -127,19 +127,19 @@ library(ggplot2)
 
 Just to make sure we understand how the data works before we start diving into creating linear models, we should probably take a look at each factor's distribution. 
 ```{r}
-c <- ggplot(Demo2.5, aes(mean))
-c + geom_density() + facet_grid(rows = vars(factor(findInterval(Geo.Join.ID, c(100, 200, 300, 400, 500)), labels = c("Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island")))) + geom_vline(aes(xintercept = 12),lty=2, color = 'blue')
+c <- ggplot(Demo2.5, aes(mean)) + labs(color = "Boroughs", title = "Distribution of PM2.5 Levels")
+c + geom_density(aes(fill = factor(findInterval(Demo2.5$Geo.Join.ID, c(100, 200, 300, 400, 500))))) + facet_grid(rows = vars(factor(findInterval(Geo.Join.ID, c(100, 200, 300, 400, 500)), labels = c("Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island")))) + geom_vline(aes(xintercept = 12),lty=1, color = 'red') + theme(legend.position = "none") + theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ```{r}
-e <- ggplot(Demo2.5, aes(crime_all_rt, mean)) + labs(color = "Boroughs")
+e <- ggplot(Demo2.5, aes(crime_all_rt, mean)) + labs(color = "Boroughs", title = "Air Quality vs. Crime per Capita")
 #legend_title <- "Boroughs"
 
 #borough.factor <- factor(findInterval(Demo2.5$Geo.Join.ID, c(100, 200, 300, 400, 500)), labels = c("Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"))
 #borough.labs <- c("Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island")
 #names(borough.labs) <- c(1, 2, 3, 4, 5)
 
-e + geom_point(aes(color = factor(findInterval(Demo2.5$Geo.Join.ID, c(100, 200, 300, 400, 500)), labels = c("Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island")))) + facet_grid(cols = vars(factor(findInterval(Demo2.5$Geo.Join.ID, c(100, 200, 300, 400, 500)), labels = c("Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island")))) + geom_smooth() + xlim(0,45) + geom_hline(aes(yintercept = 12),lty=2, color = 'blue') + labs(x = "Overall Crime Rate", y = "Mean PM2.5 Levels")
+e + geom_point(aes(color = factor(findInterval(Demo2.5$Geo.Join.ID, c(100, 200, 300, 400, 500)), labels = c("Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island")))) + facet_grid(cols = vars(factor(findInterval(Demo2.5$Geo.Join.ID, c(100, 200, 300, 400, 500)), labels = c("Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island")))) + geom_smooth() + xlim(0,41) + geom_hline(aes(yintercept = 12),lty=1, color = 'red') + labs(x = "Overall Crime per Capita", y = "Mean PM2.5 Levels") + theme(legend.position = "none") + theme(plot.title = element_text(hjust = 0.5))
 ```
 
 
