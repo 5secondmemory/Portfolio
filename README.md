@@ -29,7 +29,7 @@ Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Co
 ### Projects
 ### [The Determinants of House Pricing](https://github.com/Will-Munson/Portfolio/blob/main/Projects/The%20Determinants%20of%20House%20Pricing%20(2).pdf)
 
->Prices of homes based on their proximity to local elementary schools. <br/> Given house prices are higher near Edison Elementary, this must be a prestigious school in the area.
+>In this project, we take a look into each and every factor that goes into the overall price of housing. The box plot down below shows the prices of homes based on their proximity to local elementary schools in the area. <br/> Given house prices are higher near Edison Elementary, this must be a prestigious school in the area.
 <figure>
   <img src="Images/House pricing by Elementary School.png" class="img-responsive" alt="">
 </figure>
