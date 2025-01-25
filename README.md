@@ -47,6 +47,9 @@ Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Co
 ### [Air Quality in Marginalized Communities - Philadelphia](https://github.com/5secondmemory/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20-%20Philadelphia%20edition.pdf)
 
 <img src="Images/Philadelphia Air Quality by Race Residuals.png" class="img-responsive" alt="">
+<p>
+  <em>Residual plot showing how each neighborhood differentiates from their normal PM2.5 levels, and the racial makeup of each neighborhood.</em>
+</p>
 
 ### [Lake Mead Water Levels](https://github.com/Will-Munson/Portfolio/blob/main/Projects/Lake%20Mead%20Water%20Levels%20GIS%20poster.pdf)
 
