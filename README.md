@@ -43,6 +43,7 @@ Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Co
 
 ### [Air Quality in Marginalized Communities - Philadelphia](https://github.com/5secondmemory/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20-%20Philadelphia%20edition.pdf)
 
+>This residual plot shows how each neighborhood differs from the normal amounts of fine particulate matter in the air for the city of Philadelphia, and the racial demographics of each neighborhood. <br/> The lowest set of points on the graph represent Southeast Philadelphia. As the graph shows, Southeast Philadelphia is the only part of the city where the population is majority white.
 <img src="Images/Residuals vs Racial Makeup.png" class="img-responsive" alt="">
 <p>
   <em>Residual plot showing how each neighborhood differentiates from their normal PM2.5 levels, and the racial makeup of each neighborhood.</em>
