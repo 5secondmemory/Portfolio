@@ -30,7 +30,7 @@ Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Co
 ### [The Determinants of House Pricing](https://github.com/Will-Munson/Portfolio/blob/main/Projects/The%20Determinants%20of%20House%20Pricing%20(2).pdf)
 
 <figure>
-  <img src="Images/House pricing by Elementary School.png" class="img-responsive" alt="" width="60%" height="60%">
+  <img src="Images/House pricing by Elementary School.png" class="img-responsive" alt="">
   <figcaption>Prices of homes based on their proximity to local elementary schools. <br/>
     Given house prices are higher near Edison Elementary, this must be a prestigious school in the area.</figcaption>
 </figure>
