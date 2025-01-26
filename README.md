@@ -27,20 +27,20 @@ Data Analyst @ Cogentiv Solutions
 Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Confluence, Power BI, Python, and SQL. Experienced in LaTeX, MATLAB, Java, C#, GCP App Engine, Flask, Django, Jupyter Notebooks and Scala. 
 
 ### Projects
-### [The Determinants of House Pricing](https://github.com/Will-Munson/Portfolio/blob/main/Projects/The%20Determinants%20of%20House%20Pricing%20(2).pdf)
+### [Project 1: The Determinants of House Pricing](https://github.com/Will-Munson/Portfolio/blob/main/Projects/The%20Determinants%20of%20House%20Pricing%20(2).pdf)
 
 >In this project, we take a look into each factor that goes into the overall price of housing. The box plot down below shows the prices of homes based on their proximity to local elementary schools in the area. <br/> Given house prices are higher near Edison Elementary, this must be a prestigious school in the area.
 <img src="Images/House pricing by Elementary School.png">
 
-### [Air Quality in Marginalized Communities](https://github.com/Will-Munson/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20(2).pdf)
+### [Project 2: Air Quality in Marginalized Communities](https://github.com/Will-Munson/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20(2).pdf)
 
 <img src="Images/PM2.5 Distribution and Crime Rate.png">
 
-### [Air Quality in Marginalized Communities - Philadelphia](https://github.com/5secondmemory/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20-%20Philadelphia%20edition.pdf)
+### [Project 3: Air Quality in Marginalized Communities - Philadelphia](https://github.com/5secondmemory/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20-%20Philadelphia%20edition.pdf)
 
 >This residual plot shows how each district of Philadelphia differs from the normal amounts of fine particulate matter in the air, and the racial demographics of each district. <br/> The lowest set of points on the graph represent Southeast Philadelphia. As the graph shows, this is the only part of the city where the population is majority white, which is a potential indicator of racial bias.
 <img src="Images/Residuals vs Racial Makeup.png" class="img-responsive" alt="">
 
-### [Lake Mead Water Levels](https://github.com/Will-Munson/Portfolio/blob/main/Projects/Lake%20Mead%20Water%20Levels%20GIS%20poster.pdf)
+### [Project 4: Lake Mead Water Levels](https://github.com/Will-Munson/Portfolio/blob/main/Projects/Lake%20Mead%20Water%20Levels%20GIS%20poster.pdf)
 
 <img src="Images/Lake Mead Water Levels.png" class="img-responsive" alt="">
