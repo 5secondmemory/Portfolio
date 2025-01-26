@@ -27,7 +27,7 @@ Data Analyst @ Cogentiv Solutions
 Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Confluence, Power BI, Python, and SQL. Experienced in LaTeX, MATLAB, Java, C#, GCP App Engine, Flask, Django, Jupyter Notebooks and Scala. 
 
 ### Projects
-### Project 1: The Determinants of House Pricing [PDF here](https://github.com/Will-Munson/Portfolio/blob/main/Projects/The%20Determinants%20of%20House%20Pricing%20(2).pdf)
+### Project 1: Modeling House Prices Using Realtor Data [PDF here](https://github.com/Will-Munson/Portfolio/blob/main/Projects/The%20Determinants%20of%20House%20Pricing%20(2).pdf)
 
 >In this project, we take a look into each factor that goes into the overall price of housing, using methods such as model selection, regression analysis, and residual analysis. The box plot down below shows the prices of homes based on their proximity to local elementary schools in the area. <br/> Given house prices are higher near Edison Elementary, this must be a prestigious school in the area.
 <img src="Images/House pricing by Elementary School.png">
