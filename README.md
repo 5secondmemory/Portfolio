@@ -29,7 +29,7 @@ Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Co
 ### Projects
 ### Project 1: Modeling House Prices Using Realtor Data [PDF here](https://github.com/Will-Munson/Portfolio/blob/main/Projects/The%20Determinants%20of%20House%20Pricing%20(2).pdf)
 
->In this project, we take a look into each factor that goes into the overall price of housing, using methods such as model selection, regression analysis, and residual analysis. The box plot down below shows the prices of homes based on their proximity to local elementary schools in the area. <br/> Given house prices are higher near Edison Elementary, this must be a prestigious school in the area.
+>In this project, we take a look into each factor that goes into the overall price of housing, using methods such as model selection, regression analysis, and residual analysis. All of the analysis was conducted using R. The box plot down below shows the prices of homes based on their proximity to local elementary schools in the area. <br/> Given house prices are higher near Edison Elementary, this must be a prestigious school in the area.
 <img src="Images/House pricing by Elementary School.png">
 
 ### Project 2: Air Quality in Marginalized Communities [PDF here](https://github.com/Will-Munson/Portfolio/blob/main/Projects/Air%20Quality%20in%20Marginalized%20Communities%20(2).pdf), [Rmarkdown file here](https://github.com/Will-Munson/Portfolio/blob/main/Projects/Code%20Samples/Air%20Quality%20and%20Marginalized%20Communities.Rmd)
