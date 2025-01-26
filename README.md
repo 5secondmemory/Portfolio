@@ -44,4 +44,5 @@ Proficient in ArcGIS, R, Tidyverse, R Shiny, Tableau, MS Office, Agile, Jira, Co
 
 ### Project 4: Lake Mead Water Levels [PDF poster here](https://github.com/Will-Munson/Portfolio/blob/main/Projects/Lake%20Mead%20Water%20Levels%20GIS%20poster.pdf)
 
+>This poster illustrates the rapid decline of Lake Mead's water levels, and its impacts on the communities that depend on it. <br/> The visualizations in the poster were developed using ArcGIS. 
 <img src="Images/Lake Mead Water Levels.png" class="img-responsive" alt="">
